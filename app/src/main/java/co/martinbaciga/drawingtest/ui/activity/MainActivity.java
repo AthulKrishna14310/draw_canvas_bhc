@@ -3,16 +3,30 @@ package co.martinbaciga.drawingtest.ui.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import org.xdty.preference.colorpicker.ColorPickerDialog;
 import org.xdty.preference.colorpicker.ColorPickerSwatch;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +50,7 @@ public class MainActivity extends AppCompatActivity
 	private int mCurrentColor;
 	private int mCurrentStroke;
 	private static final int MAX_STROKE_WIDTH = 50;
+	private String uid;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -46,6 +61,11 @@ public class MainActivity extends AppCompatActivity
 		ButterKnife.bind(this);
 
 		initDrawingView();
+
+	    getSupportActionBar().setElevation(0);
+
+	    uid=getIntent().getStringExtra("UID");
+	    Toast.makeText(getApplicationContext(),uid,Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -162,10 +182,69 @@ public class MainActivity extends AppCompatActivity
 
 	private void requestPermissionsAndSaveBitmap()
 	{
-		if (PermissionManager.checkWriteStoragePermissions(this))
-		{
-			Uri uri = FileManager.saveBitmap(mDrawingView.getBitmap());
-			startShareDialog(uri);
+		if (PermissionManager.checkWriteStoragePermissions(this)) {
+			if (uid != null) {
+				String date_ = "No date";
+				DateTimeFormatter dtf = null;
+
+				if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+					dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd___HH:mm:ss");
+					LocalDateTime now = LocalDateTime.now();
+					date_ = dtf.format(now);
+				} else {
+					// Change this when moving to another tab
+				}
+				Toast.makeText(getApplicationContext(),"Uploading your image .. Please wait",Toast.LENGTH_SHORT).show();
+				Uri uri = FileManager.saveBitmap(mDrawingView.getBitmap());
+				StorageReference
+						FilePath = FirebaseStorage.getInstance().getReference()
+						.child("BHCAPPIMAGES")
+						.child(uri.getLastPathSegment());
+
+				final String finalDate_ = date_;
+				FilePath.putFile(uri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+					@Override
+					public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+						if (task.isSuccessful()) {
+							String downloadUrl = task.getResult().getDownloadUrl().toString();
+							FirebaseDatabase.getInstance().getReference().child("Users")
+									.child(uid.replace(".","_"))
+									.child("Write_it").child("Uploaded at "+finalDate_)
+
+									.setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+								@Override
+								public void onComplete(@NonNull Task<Void> task) {
+									if(task.isSuccessful()){
+										finishAffinity();
+										System.exit(0);
+									}
+								}
+							});
+						}
+					}
+				}).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+					@Override
+					public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+						double progress =
+								(100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+										.getTotalByteCount());
+						Toast toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+						toast.setText("Uploading your image  " +
+								(int) progress + "%  " +
+								"completed.");
+						toast.setGravity(Gravity.CENTER, 0, 0);
+						toast.show();
+					}
+				}).addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Toast.makeText(getApplicationContext(),"Failed to upload image please check your internet connection",Toast.LENGTH_SHORT).show();
+					}
+				});
+
+			}else{
+				Toast.makeText(getApplicationContext(),"Uploading cannot be done when opened seperately",Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 

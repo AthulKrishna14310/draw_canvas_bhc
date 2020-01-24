@@ -6,6 +6,62 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.activity.MainActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.15"
+        android:background="@color/colorPrimary"
+        android:foregroundGravity="top"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/main_fill_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_format_color_fill_white_24dp" />
+
+        <ImageView
+            android:id="@+id/main_color_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_palette_white_24dp" />
+
+        <ImageView
+            android:id="@+id/main_stroke_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_gesture_white_24dp" />
+
+        <ImageView
+            android:id="@+id/main_undo_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_undo_white_24dp" />
+
+        <ImageView
+            android:id="@+id/main_redo_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="15dp"
+            android:src="@drawable/ic_redo_white_24dp" />
+
+    </LinearLayout>
+
 
     <co.martinbaciga.drawingtest.ui.component.DrawingView
         android:id="@+id/main_drawing_view"
@@ -13,60 +69,6 @@
         android:layout_height="0dp"
         android:layout_weight="0.85"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.15"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@color/colorPrimary">
-
-        <ImageView
-            android:id="@+id/main_fill_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_color_fill_white_24dp"
-            android:padding="15dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <ImageView
-            android:id="@+id/main_color_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_palette_white_24dp"
-            android:padding="15dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <ImageView
-            android:id="@+id/main_stroke_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_gesture_white_24dp"
-            android:padding="15dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <ImageView
-            android:id="@+id/main_undo_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_undo_white_24dp"
-            android:padding="15dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-        <ImageView
-            android:id="@+id/main_redo_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_redo_white_24dp"
-            android:padding="15dp"
-            android:clickable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
-
-    </LinearLayout>
 
 
 </LinearLayout>
